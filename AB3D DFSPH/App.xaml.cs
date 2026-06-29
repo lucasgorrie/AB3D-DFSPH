@@ -9,6 +9,8 @@ namespace AB3D_DFSPH
 
         public App()
         {
+            System.IO.Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
             // Activate license for Ab3d.PowerToys:
             // The license is valid for all versions that are published before Oct 16, 2026.
             // To use versions after that date, purchase a license renewal and regenerate this activation code.

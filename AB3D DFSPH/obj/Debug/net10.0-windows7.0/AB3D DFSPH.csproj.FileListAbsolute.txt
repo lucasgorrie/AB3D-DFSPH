@@ -24,3 +24,7 @@ C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\ref
 C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.pdb
 C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.genruntimeconfig.cache
 C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\ref\AB3D DFSPH.dll
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\SharpDX.dll
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\SharpDX.Direct3D11.dll
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\SharpDX.DXGI.dll
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\SPH\Compute\particles.hlsl

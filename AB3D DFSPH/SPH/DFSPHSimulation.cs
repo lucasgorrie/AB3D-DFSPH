@@ -1,17 +1,23 @@
-﻿using Ab3d.DirectX.Controls;
-using System.Numerics;
+﻿using System.Numerics;
+using System.Runtime.InteropServices;
+using Ab3d.DirectX.Controls;
+using SharpDX.Direct3D11;
 using SPH.Simulation;
+using SPH.Compute;
 
 
 namespace SPH
 {
 
-    public sealed class DFSPHSimulator : IDisposable
+    public sealed class DFSPHSimulation : IDisposable
     {
 
         private DXViewportView _viewportView;
 
-        public DFSPHSimulator(DXViewportView viewportView)
+        private Device? _device;
+        private DeviceContext? _context;
+
+        public DFSPHSimulation(DXViewportView viewportView)
         {
             _domainGroups = new List<DomainGroup>();
             _viewportView = viewportView;
@@ -109,9 +115,22 @@ namespace SPH
         #endregion
 
         // Allocate GPU buffers, seed particles, insert the rendering step
-        public void Initialize()
+        private void Initialize()
         {
+            if (_device != null) return;
 
+            // Get pointer to DXDevice and increment its reference count
+            IntPtr p = _viewportView.DXScene.DXDevice.Device.NativePointer;
+            Marshal.AddRef(p);
+
+            // Get a SharpDX handle to the device and its context from the pointer
+            _device = new Device(p);
+            _context = _device.ImmediateContext;
+
+            // Run hardware compute shader test
+            Compute.Compute compute = new Compute.Compute(_device, _context);
+            compute.RunSelfTest();
+            compute.Dispose();
         }
 
         #region State Control
@@ -140,6 +159,8 @@ namespace SPH
 
         public void Dispose()
         {
+            _context?.Dispose();
+            _device?.Dispose();
             _viewportView.DXSceneInitialized -= OnDXSceneInitialized;
         }
 

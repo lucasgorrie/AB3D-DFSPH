@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "oVc6egUYqek=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\L&C\\source\\repos\\AB3D DFSPH\\AB3D DFSPH\\AB3D DFSPH.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\L&C\\.nuget\\packages\\ab3d.dxengine\\8.0.9484\\ab3d.dxengine.8.0.9484.nupkg.sha512",
+    "C:\\Users\\L&C\\.nuget\\packages\\ab3d.dxengine.wpf\\8.0.9484\\ab3d.dxengine.wpf.8.0.9484.nupkg.sha512",
+    "C:\\Users\\L&C\\.nuget\\packages\\ab3d.powertoys\\12.0.9484\\ab3d.powertoys.12.0.9484.nupkg.sha512"
+  ],
+  "logs": []
+}

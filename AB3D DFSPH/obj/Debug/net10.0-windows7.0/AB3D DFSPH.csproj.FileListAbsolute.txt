@@ -1,0 +1,26 @@
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\AB3D DFSPH.exe
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\AB3D DFSPH.deps.json
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\AB3D DFSPH.runtimeconfig.json
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\AB3D DFSPH.dll
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\AB3D DFSPH.pdb
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\Ab3d.DXEngine.dll
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\Ab3d.DXEngine.Wpf.dll
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\bin\Debug\net10.0-windows7.0\Ab3d.PowerToys.dll
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.csproj.AssemblyReference.cache
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\MainWindow.g.cs
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\App.g.cs
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH_MarkupCompile.cache
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH_MarkupCompile.lref
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\MainWindow.baml
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.g.resources
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.AssemblyInfoInputs.cache
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.AssemblyInfo.cs
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.csproj.CoreCompileInputs.cache
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.sourcelink.json
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.csproj.Up2Date
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.dll
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\refint\AB3D DFSPH.dll
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.pdb
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\AB3D DFSPH.genruntimeconfig.cache
+C:\Users\L&C\source\repos\AB3D DFSPH\AB3D DFSPH\obj\Debug\net10.0-windows7.0\ref\AB3D DFSPH.dll

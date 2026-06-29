@@ -1,0 +1,210 @@
+{
+  "version": 3,
+  "targets": {
+    "net10.0-windows7.0": {
+      "Ab3d.DXEngine/8.0.9484": {
+        "type": "package",
+        "compile": {
+          "lib/net10.0-windows7.0/Ab3d.DXEngine.dll": {
+            "related": ".deps.json;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0-windows7.0/Ab3d.DXEngine.dll": {
+            "related": ".deps.json;.xml"
+          }
+        }
+      },
+      "Ab3d.DXEngine.Wpf/8.0.9484": {
+        "type": "package",
+        "dependencies": {
+          "Ab3d.DXEngine": "[8.0.9484]"
+        },
+        "compile": {
+          "lib/net10.0-windows7.0/Ab3d.DXEngine.Wpf.dll": {
+            "related": ".deps.json;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0-windows7.0/Ab3d.DXEngine.Wpf.dll": {
+            "related": ".deps.json;.xml"
+          }
+        }
+      },
+      "Ab3d.PowerToys/12.0.9484": {
+        "type": "package",
+        "compile": {
+          "lib/net10.0-windows7.0/Ab3d.PowerToys.dll": {
+            "related": ".deps.json;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0-windows7.0/Ab3d.PowerToys.dll": {
+            "related": ".deps.json;.xml"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Ab3d.DXEngine/8.0.9484": {
+      "sha512": "Itc8//lFicC/QYSP2h/e+Z/EK4/UuZFf47CPZsOKnmokQ4gaFTPFnyzMAk9Y61U+0iaVmkpSR+QOG6VzwiXVCg==",
+      "type": "package",
+      "path": "ab3d.dxengine/8.0.9484",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "README.md",
+        "ab3d.dxengine.8.0.9484.nupkg.sha512",
+        "ab3d.dxengine.nuspec",
+        "icon.png",
+        "lib/net10.0-windows7.0/Ab3d.DXEngine.deps.json",
+        "lib/net10.0-windows7.0/Ab3d.DXEngine.dll",
+        "lib/net10.0-windows7.0/Ab3d.DXEngine.xml",
+        "readme.txt"
+      ]
+    },
+    "Ab3d.DXEngine.Wpf/8.0.9484": {
+      "sha512": "RPpXA+I9pGpMIAgAki/73m+RuLF8OV4dnlgABHTqBPtO/9MKaLFAEokCHrD7e8xPtuscsP5tIEbcfseT8xUs+Q==",
+      "type": "package",
+      "path": "ab3d.dxengine.wpf/8.0.9484",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "README.md",
+        "ab3d.dxengine.wpf.8.0.9484.nupkg.sha512",
+        "ab3d.dxengine.wpf.nuspec",
+        "icon.png",
+        "lib/net10.0-windows7.0/Ab3d.DXEngine.Wpf.deps.json",
+        "lib/net10.0-windows7.0/Ab3d.DXEngine.Wpf.dll",
+        "lib/net10.0-windows7.0/Ab3d.DXEngine.Wpf.xml",
+        "readme.txt"
+      ]
+    },
+    "Ab3d.PowerToys/12.0.9484": {
+      "sha512": "4yAURxrk9iQ6SiHPQPhMqWWoJDlkFQLrYr2pEqomliVEXhMtPSywYyXX1NI9HabBtR8ryZSD+DnYAhUcBj0IDQ==",
+      "type": "package",
+      "path": "ab3d.powertoys/12.0.9484",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "README.md",
+        "ab3d.powertoys.12.0.9484.nupkg.sha512",
+        "ab3d.powertoys.nuspec",
+        "icon.png",
+        "lib/net10.0-windows7.0/Ab3d.PowerToys.deps.json",
+        "lib/net10.0-windows7.0/Ab3d.PowerToys.dll",
+        "lib/net10.0-windows7.0/Ab3d.PowerToys.xml",
+        "lib/net48/Ab3d.PowerToys.dll",
+        "lib/net48/Ab3d.PowerToys.xml",
+        "lib/net6.0-windows7.0/Ab3d.PowerToys.deps.json",
+        "lib/net6.0-windows7.0/Ab3d.PowerToys.dll",
+        "lib/net6.0-windows7.0/Ab3d.PowerToys.xml",
+        "lib/net8.0-windows7.0/Ab3d.PowerToys.deps.json",
+        "lib/net8.0-windows7.0/Ab3d.PowerToys.dll",
+        "lib/net8.0-windows7.0/Ab3d.PowerToys.xml",
+        "lib/net9.0-windows7.0/Ab3d.PowerToys.deps.json",
+        "lib/net9.0-windows7.0/Ab3d.PowerToys.dll",
+        "lib/net9.0-windows7.0/Ab3d.PowerToys.xml",
+        "readme.txt"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net10.0-windows7.0": [
+      "Ab3d.DXEngine >= 8.0.9484",
+      "Ab3d.DXEngine.Wpf >= 8.0.9484",
+      "Ab3d.PowerToys >= 12.0.9484"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\L&C\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\L&C\\source\\repos\\AB3D DFSPH\\AB3D DFSPH\\AB3D DFSPH.csproj",
+      "projectName": "AB3D DFSPH",
+      "projectPath": "C:\\Users\\L&C\\source\\repos\\AB3D DFSPH\\AB3D DFSPH\\AB3D DFSPH.csproj",
+      "packagesPath": "C:\\Users\\L&C\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\L&C\\source\\repos\\AB3D DFSPH\\AB3D DFSPH\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\L&C\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net10.0-windows7.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net10.0-windows7.0": {
+          "targetAlias": "net10.0-windows7.0",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "all"
+      },
+      "SdkAnalysisLevel": "10.0.100"
+    },
+    "frameworks": {
+      "net10.0-windows7.0": {
+        "targetAlias": "net10.0-windows7.0",
+        "dependencies": {
+          "Ab3d.DXEngine": {
+            "target": "Package",
+            "version": "[8.0.9484, )"
+          },
+          "Ab3d.DXEngine.Wpf": {
+            "target": "Package",
+            "version": "[8.0.9484, )"
+          },
+          "Ab3d.PowerToys": {
+            "target": "Package",
+            "version": "[12.0.9484, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          },
+          "Microsoft.WindowsDesktop.App.WPF": {
+            "privateAssets": "none"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

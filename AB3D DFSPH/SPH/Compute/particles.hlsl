@@ -15,7 +15,7 @@ cbuffer SimCB : register(b0)
     float3 boxMax;   uint  particleCount;
 };
 
-[numthreads(64, 1, 1)]
+[numthreads(256, 1, 1)]
 void CSIntegrate(uint3 tid : SV_DispatchThreadID)
 {
     uint i = tid.x;

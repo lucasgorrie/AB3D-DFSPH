@@ -1,4 +1,6 @@
-﻿using Ab3d.DirectX.Controls;
+﻿using Ab3d.DirectX;
+using Ab3d.DirectX.Common;
+using Ab3d.DirectX.Controls;
 using Ab3d.Visuals;
 using SharpDX.Direct3D11;
 using SPH.Compute;
@@ -27,6 +29,10 @@ namespace SPH
 
         private Particle[] _seedParticles = Array.Empty<Particle>();
         private Particle[] _cpuParticles = Array.Empty<Particle>();
+
+        private bool _seeded;
+
+        const int MAXCAPACITY = 100_000;
 
         public DFSPHSimulation(DXViewportView viewportView)
         {
@@ -138,50 +144,55 @@ namespace SPH
             // Get a SharpDX handle to the device and its context from the pointer
             _device = new Device(p);
             _context = _device.ImmediateContext;
-
             _compute = new FluidCompute(_device, _context);
-            IsRunning = true;
-
-            RunFluidTest();
-        }
-
-        private void RunFluidTest()
-        {
-            if (_compute is null) return;
 
             // Init particle compute shaders
-            int n = 50_000;
-            _compute.Initialize(n);
-
-            // Set param fields
-            _boxMin = new Vector3(-0.5f, 0f, -0.5f);
-            _boxMax = new Vector3(0.5f, 1.5f, 0.5f);
-            const float spacing = 0.02f;
-
-            // Space initial particles
-            List<Particle> seed = new List<Particle>();
-            for (float x = -0.2f; x <= 0.2f; x += spacing)
-                for (float y = 1.0f; y <= 1.4f; y += spacing)
-                    for (float z = -0.2f; z <= 0.2f; z += spacing)
-                        seed.Add(new Particle { Position = new Vector3(x, y, z) });
-
-            // Record initial state and seed fluid compute
-            _seedParticles = seed.ToArray();
-            _compute.Seed(_seedParticles);
-
-            _renderPositions = seed.Select(p => p.Position).ToArray();
-            _cpuParticles = new Particle[_compute.ParticleCount];
-
-            // Set initial visuals
-            _pixels = new PixelsVisual3D(_renderPositions)
-            {
-                PixelColor = new Color() { ScR = 0.3f, ScG = 0.55f, ScB = 1.0f, ScA = 1.0f },
-                PixelSize = 4.0f
-            };
-            _viewportView.Viewport3D.Children.Add(_pixels);
+            _compute.Initialize(MAXCAPACITY);
 
             // Subscribe to rendering
             _viewportView.SceneUpdating += OnRender;
+        }
+
+        private bool SeedFromContainers()
+        {
+            List<FluidContainer>? containers = _domainGroups.SelectMany(g => g.Domains).ToList();
+            List<Particle> seed = new List<Particle>();
+            if (containers.Count == 0) return false;
+
+            foreach (FluidContainer c in containers)
+            {
+                SceneNode node = c.ContainerNode;
+                node.UpdateWorldBoundingBox(true);
+                if (node.WorldBounds is null) return false;
+
+                BoundingBox bb = node.WorldBounds.BoundingBox;
+                Vector3 min = bb.Minimum, max = bb.Maximum;
+
+                float s = c.Fluid.ParticleSpacing;
+                float fillTop = min.Y + (max.Y - min.Y) * c.FillFraction;
+                for (float x = min.X + s; x < max.X - s; x += s)
+                    for (float y = min.Y + s; y < fillTop; y += s)
+                        for (float z = min.Z + s; z < max.Z - s; z += s)
+                            seed.Add(new Particle { Position = new Vector3(x, y, z) });
+
+                _boxMin = min;
+                _boxMax = max;
+            }
+            if (seed.Count == 0) return false;
+
+            _seedParticles = seed.ToArray();
+            _compute!.Seed(_seedParticles);
+            _cpuParticles = new Particle[_compute.ParticleCount];
+            _renderPositions = _seedParticles.Select(p => p.Position).ToArray();
+
+            _pixels = new PixelsVisual3D(_renderPositions) 
+            {
+                PixelColor = new Color { ScR = 0.3f, ScG = 0.55f, ScB = 1f, ScA = 1f }, 
+                PixelSize = 4f 
+            };
+            _viewportView.Viewport3D.Children.Add(_pixels);
+
+            return true;
         }
 
         // Render delegate & temporary fields
@@ -190,6 +201,14 @@ namespace SPH
         private void OnRender(object? sender, EventArgs e)
         {
             if (!IsRunning || _compute is null) return;
+            if (!_seeded) 
+            { 
+                if (!SeedFromContainers()) return; 
+
+                _seeded = true;
+                _renderTimer.Restart();
+                return;
+            }
 
             // Determine frame dt
             if (!_renderTimer.IsRunning)

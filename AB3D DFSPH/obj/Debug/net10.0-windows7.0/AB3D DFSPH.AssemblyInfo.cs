@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AB3D DFSPH")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ead959d16ba82378bf44f7deddb0c0b661b86de2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+93ab439078f6c5cddaf7b3760c4667987d76208f")]
 [assembly: System.Reflection.AssemblyProductAttribute("AB3D DFSPH")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AB3D DFSPH")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

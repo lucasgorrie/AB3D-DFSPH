@@ -13,6 +13,13 @@ namespace SPH.Simulation
             Fluid = fluid;
         }
 
+        public FluidContainer(SceneNode containerNode, FluidProperties fluid, float fillFraction)
+        {
+            ContainerNode = containerNode;
+            Fluid = fluid;
+            FillFraction = fillFraction;
+        }
+
         public FluidProperties Fluid { get; set; }
         public SceneNode ContainerNode { get; }
 

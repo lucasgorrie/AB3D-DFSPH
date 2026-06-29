@@ -1,9 +1,13 @@
-﻿using System.Numerics;
-using System.Runtime.InteropServices;
+﻿using Ab3d.DirectX.Common;
 using Ab3d.DirectX.Controls;
+using Ab3d.Visuals;
 using SharpDX.Direct3D11;
-using SPH.Simulation;
 using SPH.Compute;
+using SPH.Simulation;
+using System.Diagnostics;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Windows.Media;
 
 
 namespace SPH
@@ -12,10 +16,14 @@ namespace SPH
     public sealed class DFSPHSimulation : IDisposable
     {
 
+        private FluidCompute _compute;
         private DXViewportView _viewportView;
 
         private Device? _device;
         private DeviceContext? _context;
+
+        private PixelsVisual3D? _pixels;
+        private Vector3[] _renderPositions = Array.Empty<Vector3>();
 
         public DFSPHSimulation(DXViewportView viewportView)
         {
@@ -127,10 +135,33 @@ namespace SPH
             _device = new Device(p);
             _context = _device.ImmediateContext;
 
-            // Run hardware compute shader test
-            Compute.Compute compute = new Compute.Compute(_device, _context);
-            compute.RunSelfTest();
-            compute.Dispose();
+            _compute = new FluidCompute(_device, _context);
+            RunComputeTest();
+        }
+
+        private void RunComputeTest()
+        {
+            _compute.Initialize(20000);
+
+            Vector3 boxMin = new Vector3(-0.5f, 0f, -0.5f);
+            Vector3 boxMax = new Vector3(0.5f, 1.5f, 0.5f);
+            const float spacing = 0.04f;
+
+            List<Particle> seed = new List<Particle>();
+            for (float x = -0.2f; x <= 0.2f; x += spacing)
+                for (float y = 1.0f; y <= 1.4f; y += spacing)
+                    for (float z = -0.2f; z <= 0.2f; z += spacing)
+                        seed.Add(new Particle { Position = new Vector3(x, y, z) });
+
+            _compute.Seed(seed.ToArray());
+            _renderPositions = seed.Select(p => p.Position).ToArray();
+
+            _pixels = new PixelsVisual3D(_renderPositions)
+            {
+                PixelColor = new Color() { ScR = 0.3f, ScG = 0.55f, ScB = 1.0f, ScA = 1.0f },
+                PixelSize = 4.0f
+            };
+            _viewportView.Viewport3D.Children.Add(_pixels);
         }
 
         #region State Control

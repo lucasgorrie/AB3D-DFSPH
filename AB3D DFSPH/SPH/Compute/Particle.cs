@@ -17,7 +17,8 @@ namespace SPH.Compute
     {
         public Vector3 Gravity; public float Dt;
         public Vector3 BoxMin; public float Restitution;
-        public Vector3 BoxMax; public uint ParticleCount;
-    }  // stride = 48 bytes
+        public Vector3 BoxMax; public uint particleCount;
+        public uint Offset; public uint _p0, _p1, _p2;
+    }  // stride = 64 bytes
 
 }

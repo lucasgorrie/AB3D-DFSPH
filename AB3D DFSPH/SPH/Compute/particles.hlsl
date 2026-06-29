@@ -10,18 +10,20 @@ RWStructuredBuffer<Particle> Particles : register(u0);
 
 cbuffer SimCB : register(b0)
 {
-    float3 gravity;  float dt;
-    float3 boxMin;   float restitution;
-    float3 boxMax;   uint  particleCount;
+    float3 gravity; float dt;
+    float3 boxMin;  float restitution;
+    float3 boxMax;  uint  particleCount;
+    uint   offset;  uint3 _pad;
 };
 
 [numthreads(256, 1, 1)]
-void CSIntegrate(uint3 tid : SV_DispatchThreadID)
+void CSIntegrate(uint3 ThreadID : SV_DispatchThreadID)
 {
-    uint i = tid.x;
+    uint i = ThreadID.x;
     if (i >= particleCount) return;
 
-    Particle p = Particles[i];
+    uint idx = offset + i;
+    Particle p = Particles[idx];
 
     p.velocity += gravity * dt;
     p.position += p.velocity * dt;
@@ -33,5 +35,5 @@ void CSIntegrate(uint3 tid : SV_DispatchThreadID)
     if (p.position.z < boxMin.z) { p.position.z = boxMin.z; p.velocity.z = -p.velocity.z * restitution; }
     if (p.position.z > boxMax.z) { p.position.z = boxMax.z; p.velocity.z = -p.velocity.z * restitution; }
 
-    Particles[i] = p;
+    Particles[idx] = p;
 }

@@ -120,8 +120,10 @@ namespace SPH.Compute
             finally { handle.Free(); }
         }
 
-        public void Step(float dt, Vector3 gravity, Vector3 boxMin, Vector3 boxMax, float restitution = 0.3f)
+        public void StepRegion(float dt, Vector3 gravity, Vector3 boxMin, Vector3 boxMax, int offset, int count, float restitution = 0.3f)
         {
+            if (count <= 0) return;
+
             SimConstants cb = new SimConstants
             {
                 Gravity = gravity,
@@ -129,16 +131,17 @@ namespace SPH.Compute
                 BoxMin = boxMin,
                 Restitution = restitution,
                 BoxMax = boxMax,
-                ParticleCount = (uint)ParticleCount,
+                particleCount = (uint)count,
+                Offset = (uint)offset
             };
-            _context.UpdateSubresource(ref cb, _constantBuffer);
 
+            _context.UpdateSubresource(ref cb, _constantBuffer);
             _context.ComputeShader.Set(_integrate);
             _context.ComputeShader.SetUnorderedAccessView(0, _particleUav);
             _context.ComputeShader.SetConstantBuffer(0, _constantBuffer);
-            _context.Dispatch((ParticleCount + (Threads - 1)) / Threads, 1, 1);
 
-            _context.ComputeShader.SetUnorderedAccessView(0, null);   // unbind for the next upload/readback
+            _context.Dispatch((count + Threads - 1) / Threads, 1, 1);
+            _context.ComputeShader.SetUnorderedAccessView(0, null);
             _context.ComputeShader.Set(null);
         }
 

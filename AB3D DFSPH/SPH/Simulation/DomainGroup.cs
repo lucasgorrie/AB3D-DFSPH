@@ -29,6 +29,7 @@ namespace SPH.Simulation
             get => _domains; 
         }
 
+        public bool IsRunning { get; set; } = true;
         public string? Name { get; set; }
 
         #endregion

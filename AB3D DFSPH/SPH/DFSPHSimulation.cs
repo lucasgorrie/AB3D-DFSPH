@@ -63,7 +63,7 @@ namespace SPH
         public float MaxDensityError { get; set; } = 0.01f;
 
         public bool IsRunning { get; private set; }
-        public int ParticleCount { get; private set; }
+        public int ParticleCount => _domainGroups.SelectMany(g => g.Domains).Sum(c => c.ParticleCount);
 
         #endregion
 
@@ -159,6 +159,8 @@ namespace SPH
             List<Particle> seed = new List<Particle>();
             if (containers.Count == 0) return false;
 
+            int offset = 0;
+            uint domainId = 0;
             foreach (FluidContainer c in containers)
             {
                 SceneNode node = c.ContainerNode;
@@ -167,16 +169,23 @@ namespace SPH
 
                 BoundingBox bb = node.WorldBounds.BoundingBox;
                 Vector3 min = bb.Minimum, max = bb.Maximum;
+                c.BoxMin = min; c.BoxMax = max;
 
                 float s = c.Fluid.ParticleSpacing;
                 float fillTop = min.Y + (max.Y - min.Y) * c.FillFraction;
+
+                int before = seed.Count;
+                c.BufferOffset = offset;
+
                 for (float x = min.X + s; x < max.X - s; x += s)
                     for (float y = min.Y + s; y < fillTop; y += s)
                         for (float z = min.Z + s; z < max.Z - s; z += s)
-                            seed.Add(new Particle { Position = new Vector3(x, y, z) });
+                            seed.Add(new Particle { Position = new Vector3(x, y, z), DomainId = domainId });
 
-                _boxMin = min;
-                _boxMax = max;
+                c.ParticleCount = seed.Count - before;
+                offset += c.ParticleCount;
+
+                domainId++;
             }
             if (seed.Count == 0) return false;
 
@@ -195,9 +204,7 @@ namespace SPH
             return true;
         }
 
-        // Render delegate & temporary fields
-        private Vector3 _boxMin;
-        private Vector3 _boxMax;
+        // Render delegate
         private void OnRender(object? sender, EventArgs e)
         {
             if (!IsRunning || _compute is null) return;
@@ -261,7 +268,12 @@ namespace SPH
             int subs = Math.Max(1, (int)MathF.Ceiling(dt / MaxTimeStep));
             float subDt = dt / subs;
             for (int s = 0; s < subs; s++)
-                _compute.Step(subDt, Gravity, _boxMin, _boxMax);
+                foreach (DomainGroup g in _domainGroups)
+                {
+                    if (!g.IsRunning) continue;
+                    foreach (FluidContainer c in g.Domains)
+                        _compute!.StepRegion(subDt, Gravity, c.BoxMin, c.BoxMax, c.BufferOffset, c.ParticleCount);
+                }
 
             UpdateRender();
         }

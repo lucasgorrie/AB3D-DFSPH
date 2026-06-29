@@ -18,7 +18,7 @@
             </Viewport3D>
         </dxControls:DXViewportView>
 
-        <cameras:TargetPositionCamera x:Name="Camera" TargetViewport3D="{Binding ElementName=Viewport}"/>
+        <cameras:TargetPositionCamera x:Name="Camera" TargetViewport3D="{Binding ElementName=Viewport}" Distance="5"/>
 
         <controls:MouseCameraController Name="MouseCameraController" RotateCameraConditions="LeftMouseButtonPressed" TargetCamera="{Binding ElementName=Camera}"
                                         MoveCameraConditions="LeftMouseButtonPressed, ControlKey" EventsSourceElement="{Binding ElementName=ViewportGrid}"/>

@@ -22,6 +22,7 @@ namespace SPH.Compute
         private Buffer _stagingBuffer = null!;
 
         private static readonly int _stride = Marshal.SizeOf<Particle>();
+        const int Threads = 256;
 
         public FluidCompute(Device device, DeviceContext context)
         {
@@ -135,7 +136,7 @@ namespace SPH.Compute
             _context.ComputeShader.Set(_integrate);
             _context.ComputeShader.SetUnorderedAccessView(0, _particleUav);
             _context.ComputeShader.SetConstantBuffer(0, _constantBuffer);
-            _context.Dispatch((ParticleCount + 63) / 64, 1, 1);
+            _context.Dispatch((ParticleCount + (Threads - 1)) / Threads, 1, 1);
 
             _context.ComputeShader.SetUnorderedAccessView(0, null);   // unbind for the next upload/readback
             _context.ComputeShader.Set(null);

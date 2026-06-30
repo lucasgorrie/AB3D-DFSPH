@@ -177,7 +177,7 @@ void CSPressureCorrect(uint3 ThreadID : SV_DispatchThreadID)
             vsum += (ki + kj) * mass * gradW(xi - xj);
         }
     }
-    Particles[i].velocity -= dt * vsum;
+    Particles[i].velocity += dt * vsum;
 }
 
 [numthreads(THREADS, 1, 1)]

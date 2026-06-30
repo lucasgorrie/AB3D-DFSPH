@@ -1,4 +1,4 @@
-#define THREADS 256
+#define THREADS 512
 #define SCAN_BLOCK (THREADS * 2)
 groupshared uint gTemp[SCAN_BLOCK];
 

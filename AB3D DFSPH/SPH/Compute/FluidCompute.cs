@@ -13,7 +13,7 @@ namespace SPH.Compute
     public class FluidCompute : IDisposable
     {
 
-        private const int THREADS = 256;
+        private const int THREADS = 512;
         private const int SCAN_BLOCK = THREADS * 2;
 
         private readonly Device _device;

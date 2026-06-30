@@ -7,7 +7,7 @@ namespace SPH.Simulation
     {
 
         public float RestDensity { get; set; } = 1000f;
-        public float ParticleRadius { get; set; } = 0.025f;
+        public float ParticleRadius { get; set; } = 0.05f;
         public float Viscosity { get; set; } = 0.01f;
         public float SurfaceTension { get; set; } = 0f;
 

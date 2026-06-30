@@ -35,8 +35,8 @@ namespace SPH
         private float _vMax;
         private bool _seeded;
 
-        public const int MAXCAPACITY = 100_000;
-        private const float CFLFACTOR = 0.2f;
+        public const int MAXCAPACITY = 50_000;
+        private const float CFLFACTOR = 0.25f;
 
         public DFSPHSimulation(DXViewportView viewportView)
         {
@@ -60,16 +60,11 @@ namespace SPH
 
         public ParticleRenderMode RenderMode { get; set; } = ParticleRenderMode.Points;
 
-        public int SubStepsPerFrame { get; set; } = 1;
-        public int MinIterations { get; set; } = 2;
-        public int MaxIterations { get; set; } = 100;
+        public int PressureIterations { get; set; } = 24;
+        public int DivergenceIterations { get; set; } = 4;
+        public int MaxSubsteps { get; set; } = 4;
 
-        public int PressureIterations { get; set; } = 6;
-        public int DivergenceIterations { get; set; } = 6;
-        public int MaxSubsteps { get; set; } = 10;
-
-        public float MaxTimeStep { get; set; } = 1f / 120f;
-        public float MaxDensityError { get; set; } = 0.01f;
+        public float MaxTimeStep { get; set; } = 1f / 1024f;
 
         public float Restitution { get; set; } = 0.4f;
 
@@ -183,7 +178,12 @@ namespace SPH
                     if (node.WorldBounds is null) return false;
 
                     BoundingBox bb = node.WorldBounds.BoundingBox;
-                    c.BoxMin = bb.Minimum; c.BoxMax = bb.Maximum;
+                    c.BoxMin = bb.Minimum;
+                    c.BoxMax = bb.Maximum;
+
+                    Vector3 containerSpan = bb.Maximum - bb.Minimum;
+                    float conatinerScale = containerSpan.X * containerSpan.Y * containerSpan.Z;
+                    c.Fluid.ParticleRadius *= conatinerScale;
 
                     float s = c.Fluid.ParticleSpacing;
                     float fillTop = c.BoxMin.Y + (c.BoxMax.Y - c.BoxMin.Y) * c.FillFraction;
@@ -268,14 +268,14 @@ namespace SPH
             _compute.ReadBack(_cpuParticles);
             float vmax = 0f;
 
-            for (int i = 0; i < _renderPositions.Length; i++)
+            Parallel.For(0, _renderPositions.Length, (i) =>
             {
                 _renderPositions[i] = _cpuParticles[i].Position;
                 vmax = MathF.Max(vmax, _cpuParticles[i].Velocity.Length());
 
                 float t = Math.Clamp(_cpuParticles[i].Density / 1000f, 0f, 1f);
                 _renderColours[i] = new Color4(0.2f + 0.8f * t, 0.4f + 0.6f * t, 1f, 1f);
-            }
+            });
             _vMax = vmax;
 
             _pixels.UpdatePositions();
@@ -308,7 +308,9 @@ namespace SPH
 
             // Compute particle substeps and stability criterion
             float cfl = _vMax > 1e-4f ? CFLFACTOR * _particleDiameter / _vMax : MaxTimeStep;
-            float subDt = MathF.Min(MaxTimeStep, cfl);
+            float minDt = MaxTimeStep / 64f;
+            float subDt = Math.Clamp(cfl, minDt, MaxTimeStep);
+
             int subs = Math.Clamp((int)MathF.Ceiling(dt / subDt), 1, MaxSubsteps);
             _compute.UpdateSolverConstants(Gravity, subDt, Restitution);
 

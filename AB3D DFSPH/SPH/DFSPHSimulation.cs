@@ -37,7 +37,6 @@ namespace SPH
 
         public const int MAXCAPACITY = 100_000;
         private const float CFLFACTOR = 0.2f;
-        private const float RESTITUTION = 0.4f;
 
         public DFSPHSimulation(DXViewportView viewportView)
         {
@@ -65,12 +64,14 @@ namespace SPH
         public int MinIterations { get; set; } = 2;
         public int MaxIterations { get; set; } = 100;
 
-        public int PressureIterations { get; set; } = 2;
-        public int DivergenceIterations { get; set; } = 2;
+        public int PressureIterations { get; set; } = 6;
+        public int DivergenceIterations { get; set; } = 6;
         public int MaxSubsteps { get; set; } = 10;
 
-        public float MaxTimeStep { get; set; } = 1f / 120f;   // Should be CFL-capped
+        public float MaxTimeStep { get; set; } = 1f / 120f;
         public float MaxDensityError { get; set; } = 0.01f;
+
+        public float Restitution { get; set; } = 0.4f;
 
         public bool IsRunning { get; private set; }
         public int ParticleCount => _domainGroups.SelectMany(g => g.Domains).Sum(c => c.ParticleCount);
@@ -309,7 +310,7 @@ namespace SPH
             float cfl = _vMax > 1e-4f ? CFLFACTOR * _particleDiameter / _vMax : MaxTimeStep;
             float subDt = MathF.Min(MaxTimeStep, cfl);
             int subs = Math.Clamp((int)MathF.Ceiling(dt / subDt), 1, MaxSubsteps);
-            _compute.UpdateSolverConstants(Gravity, subDt, RESTITUTION);
+            _compute.UpdateSolverConstants(Gravity, subDt, Restitution);
 
             for (int s = 0; s < subs; s++)
             {

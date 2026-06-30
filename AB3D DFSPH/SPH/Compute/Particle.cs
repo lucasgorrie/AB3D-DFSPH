@@ -10,15 +10,34 @@ namespace SPH.Compute
     {
         public Vector3 Position; public uint DomainId;
         public Vector3 Velocity; public uint MaterialId;
-    }  // stride = 32 bytes
+        public float Density; public uint GroupId;
+        public float DensityAdv;
+    }  // Stride = 44 bytes
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct SimConstants
+    public struct GridConstants
+    {
+        public float CellSize; public uint TableSize;
+        public uint TotalCount; public uint NumBlocks;
+
+        public float Mass; public float KernelK;
+        public float RestDensity; public uint Padding;
+    }  // Stride = 32 bytes
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct SolverConstants
     {
         public Vector3 Gravity; public float Dt;
-        public Vector3 BoxMin; public float Restitution;
-        public Vector3 BoxMax; public uint particleCount;
-        public uint Offset; public uint _p0, _p1, _p2;
-    }  // stride = 64 bytes
+
+        public float InvH; public float InvH2;
+        public float Restitution; public float Padding;
+    }  // Stride = 32 bytes
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct DomainBound
+    {
+        public Vector4 Min; 
+        public Vector4 Max;
+    }  // Stride = 32 bytes
 
 }

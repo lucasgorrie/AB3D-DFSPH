@@ -26,13 +26,18 @@ namespace SPH
 
         private PixelsVisual3D? _pixels;
         private Vector3[] _renderPositions = Array.Empty<Vector3>();
+        private Color4[] _renderColours = Array.Empty<Color4>();
 
         private Particle[] _seedParticles = Array.Empty<Particle>();
         private Particle[] _cpuParticles = Array.Empty<Particle>();
 
+        private float _particleDiameter;  // Will need to be expanded to support multiple Fluid configurations across containers
+        private float _vMax;
         private bool _seeded;
 
-        const int MAXCAPACITY = 100_000;
+        public const int MAXCAPACITY = 100_000;
+        private const float CFLFACTOR = 0.2f;
+        private const float RESTITUTION = 0.4f;
 
         public DFSPHSimulation(DXViewportView viewportView)
         {
@@ -59,6 +64,11 @@ namespace SPH
         public int SubStepsPerFrame { get; set; } = 1;
         public int MinIterations { get; set; } = 2;
         public int MaxIterations { get; set; } = 100;
+
+        public int PressureIterations { get; set; } = 2;
+        public int DivergenceIterations { get; set; } = 2;
+        public int MaxSubsteps { get; set; } = 10;
+
         public float MaxTimeStep { get; set; } = 1f / 120f;   // Should be CFL-capped
         public float MaxDensityError { get; set; } = 0.01f;
 
@@ -155,49 +165,69 @@ namespace SPH
 
         private bool SeedFromContainers()
         {
+            if (_compute is null) return false;
+
+            // Get all containers
             List<FluidContainer>? containers = _domainGroups.SelectMany(g => g.Domains).ToList();
-            List<Particle> seed = new List<Particle>();
-            if (containers.Count == 0) return false;
+            List<Particle> seed = new();
 
             int offset = 0;
             uint domainId = 0;
-            foreach (FluidContainer c in containers)
-            {
-                SceneNode node = c.ContainerNode;
-                node.UpdateWorldBoundingBox(true);
-                if (node.WorldBounds is null) return false;
 
-                BoundingBox bb = node.WorldBounds.BoundingBox;
-                Vector3 min = bb.Minimum, max = bb.Maximum;
-                c.BoxMin = min; c.BoxMax = max;
+            for (int gi = 0; gi < _domainGroups.Count; gi++)
+                foreach (FluidContainer c in _domainGroups[gi].Domains)
+                {
+                    SceneNode node = c.ContainerNode;
+                    node.UpdateWorldBoundingBox(true);
+                    if (node.WorldBounds is null) return false;
 
-                float s = c.Fluid.ParticleSpacing;
-                float fillTop = min.Y + (max.Y - min.Y) * c.FillFraction;
+                    BoundingBox bb = node.WorldBounds.BoundingBox;
+                    c.BoxMin = bb.Minimum; c.BoxMax = bb.Maximum;
 
-                int before = seed.Count;
-                c.BufferOffset = offset;
+                    float s = c.Fluid.ParticleSpacing;
+                    float fillTop = c.BoxMin.Y + (c.BoxMax.Y - c.BoxMin.Y) * c.FillFraction;
 
-                for (float x = min.X + s; x < max.X - s; x += s)
-                    for (float y = min.Y + s; y < fillTop; y += s)
-                        for (float z = min.Z + s; z < max.Z - s; z += s)
-                            seed.Add(new Particle { Position = new Vector3(x, y, z), DomainId = domainId });
+                    int before = seed.Count;
+                    c.BufferOffset = offset;
 
-                c.ParticleCount = seed.Count - before;
-                offset += c.ParticleCount;
+                    for (float x = c.BoxMin.X + s; x < c.BoxMax.X - s; x += s)
+                        for (float y = c.BoxMin.Y + s; y < fillTop; y += s)
+                            for (float z = c.BoxMin.Z + s; z < c.BoxMax.Z - s; z += s)
+                                seed.Add(new Particle { Position = new Vector3(x, y, z), DomainId = domainId, GroupId = (uint)gi });
 
-                domainId++;
-            }
+                    c.ParticleCount = seed.Count - before;
+                    offset += c.ParticleCount;
+                    domainId++;
+                }
+
             if (seed.Count == 0) return false;
 
+            // Initialize GPU compute with seed
             _seedParticles = seed.ToArray();
-            _compute!.Seed(_seedParticles);
+            _compute.Seed(_seedParticles);
+
+            // Initialize GPU grid
+            FluidProperties fluid = _domainGroups[0].Domains[0].Fluid;
+            _compute.InitializeGridHash(fluid.SupportRadius, fluid.ParticleMass, fluid.RestDensity, _compute.ParticleCount);
+            _particleDiameter = fluid.ParticleSpacing;
+
+            DomainBound[] bounds = containers.Select(c => new DomainBound
+            {
+                Min = new Vector4(c.BoxMin, 0f),
+                Max = new Vector4(c.BoxMax, 0f),
+            }).ToArray();
+            _compute.InitializeSolver(bounds);
+
+            // Record initial state & initialize visualization
             _cpuParticles = new Particle[_compute.ParticleCount];
             _renderPositions = _seedParticles.Select(p => p.Position).ToArray();
+            _renderColours = new Color4[_renderPositions.Length];
 
             _pixels = new PixelsVisual3D(_renderPositions) 
             {
                 PixelColor = new Color { ScR = 0.3f, ScG = 0.55f, ScB = 1f, ScA = 1f }, 
-                PixelSize = 4f 
+                PixelSize = 4f,
+                PixelColors = _renderColours
             };
             _viewportView.Viewport3D.Children.Add(_pixels);
 
@@ -235,9 +265,20 @@ namespace SPH
 
             // Read gpu compute back into cpuParticles and update visuals
             _compute.ReadBack(_cpuParticles);
+            float vmax = 0f;
+
             for (int i = 0; i < _renderPositions.Length; i++)
+            {
                 _renderPositions[i] = _cpuParticles[i].Position;
+                vmax = MathF.Max(vmax, _cpuParticles[i].Velocity.Length());
+
+                float t = Math.Clamp(_cpuParticles[i].Density / 1000f, 0f, 1f);
+                _renderColours[i] = new Color4(0.2f + 0.8f * t, 0.4f + 0.6f * t, 1f, 1f);
+            }
+            _vMax = vmax;
+
             _pixels.UpdatePositions();
+            _pixels.UpdatePixelColors();
         }
 
         #region State Control
@@ -264,16 +305,26 @@ namespace SPH
             if (_compute is null) return;
             if (dt <= 0) dt = MaxTimeStep;
 
-            // Compute particle substeps
-            int subs = Math.Max(1, (int)MathF.Ceiling(dt / MaxTimeStep));
-            float subDt = dt / subs;
+            // Compute particle substeps and stability criterion
+            float cfl = _vMax > 1e-4f ? CFLFACTOR * _particleDiameter / _vMax : MaxTimeStep;
+            float subDt = MathF.Min(MaxTimeStep, cfl);
+            int subs = Math.Clamp((int)MathF.Ceiling(dt / subDt), 1, MaxSubsteps);
+            _compute.UpdateSolverConstants(Gravity, subDt, RESTITUTION);
+
             for (int s = 0; s < subs; s++)
-                foreach (DomainGroup g in _domainGroups)
-                {
-                    if (!g.IsRunning) continue;
-                    foreach (FluidContainer c in g.Domains)
-                        _compute!.StepRegion(subDt, Gravity, c.BoxMin, c.BoxMax, c.BufferOffset, c.ParticleCount);
-                }
+            {
+                _compute.BuildHash();
+                _compute.ComputeDensity();
+                _compute.ComputeFactor();
+
+                for (int it = 0; it < DivergenceIterations; it++) { _compute.DivergenceAdv(); _compute.DivergenceCorrect(); }
+
+                _compute.ApplyForces();
+
+                for (int it = 0; it < PressureIterations; it++) { _compute.DensityAdv(); _compute.PressureCorrect(); }
+
+                _compute.IntegratePos();
+            }
 
             UpdateRender();
         }
@@ -294,6 +345,7 @@ namespace SPH
 
             _viewportView.DXSceneInitialized -= OnDXSceneInitialized;
             _viewportView.SceneUpdating -= OnRender;
+
             _compute?.Dispose();
             _context?.Dispose();
             _device?.Dispose();
